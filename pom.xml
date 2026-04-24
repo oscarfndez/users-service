@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.oscarfndez.gamescollection</groupId>
-    <artifactId>games-collection</artifactId>
+    <artifactId>users-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>games-collection</name>
-    <description>Games collection</description>
+    <name>users-service</name>
+    <description>Users service</description>
     <url/>
     <licenses>
         <license/>
@@ -68,9 +68,6 @@
             <optional>true</optional>
         </dependency>
 
-
-
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -82,7 +79,6 @@
             <version>1.20.0</version>
             <scope>test</scope>
         </dependency>
-
 
         <!-- JUNIT 5 + Sprng exetension -->
 
@@ -112,7 +108,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -128,7 +123,6 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.12.3</version>
         </dependency>
-
 
     </dependencies>
 
@@ -251,7 +245,7 @@
                         <image>eclipse-temurin:21-jre</image>
                     </from>
                     <to>
-                        <image>oscarfndez/games-collection</image>
+                        <image>oscarfndez/users-service</image>
                     </to>
                     <container>
                         <ports>

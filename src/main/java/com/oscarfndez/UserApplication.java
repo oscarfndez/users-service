@@ -8,10 +8,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @SpringBootApplication
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class GamesCollectionApplication {
+public class UserApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GamesCollectionApplication.class, args);
+        SpringApplication.run(UserApplication.class, args);
     }
 }
 
