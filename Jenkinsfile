@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'oscarfndez/games-collection'
+        IMAGE_NAME = 'oscarfndez/users-service'
         IMAGE_TAG = "build-${env.BUILD_NUMBER}"
     }
 
