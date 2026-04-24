@@ -1,7 +1,7 @@
 package com.oscarfndez.framework.adapters.persistence.repositories;
 
+import com.oscarfndez.framework.adapters.persistence.exceptions.ResourceNotFoundException;
 import com.oscarfndez.framework.adapters.persistence.mappers.ModelEntityMapper;
-import com.oscarfndez.inventory.adapters.persistence.exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
