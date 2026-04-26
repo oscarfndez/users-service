@@ -17,10 +17,10 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -81,21 +81,29 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
                 request.getMethod(), path, response.getStatus(), readPayload(response.getContentAsByteArray(), response.getCharacterEncoding(), response.getContentType()));
     }
 
-    private Map<String, String> safeHeaders(HttpServletRequest request) {
+    private Map<String, List<String>> safeHeaders(HttpServletRequest request) {
         return Collections.list(request.getHeaderNames())
                 .stream()
                 .collect(Collectors.toMap(
-                        Function.identity(),
-                        header -> safeHeaderValue(header, request.getHeader(header))
+                        header -> header,
+                        header -> Collections.list(request.getHeaders(header))
+                                .stream()
+                                .map(value -> safeHeaderValue(header, value))
+                                .toList(),
+                        (existing, duplicate) -> existing
                 ));
     }
 
-    private Map<String, String> safeHeaders(HttpServletResponse response) {
+    private Map<String, List<String>> safeHeaders(HttpServletResponse response) {
         return response.getHeaderNames()
                 .stream()
                 .collect(Collectors.toMap(
-                        Function.identity(),
-                        header -> safeHeaderValue(header, response.getHeader(header))
+                        header -> header,
+                        header -> response.getHeaders(header)
+                                .stream()
+                                .map(value -> safeHeaderValue(header, value))
+                                .toList(),
+                        (existing, duplicate) -> existing
                 ));
     }
 
