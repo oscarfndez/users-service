@@ -10,6 +10,7 @@ import com.oscarfndez.users.ports.repositories.UserRepository;
 import com.oscarfndez.users.core.services.auth.AuthenticationService;
 import com.oscarfndez.users.core.services.auth.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -29,6 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(Role.USER).build();
         userRepository.save(user);
         var jwt = jwtService.generateToken(user);
+        log.info("User signed up email={} role={}", user.getEmail(), user.getRole());
         return JwtAuthenticationResponse.builder().token(jwt).build();
     }
 
@@ -39,6 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
         var jwt = jwtService.generateToken(user);
+        log.info("User signed in email={} role={}", user.getEmail(), user.getRole());
         return JwtAuthenticationResponse.builder().token(jwt).build();
     }
 }
