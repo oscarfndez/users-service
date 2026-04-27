@@ -27,7 +27,7 @@ pipeline {
                       mvn -B sonar:sonar \
                         -DskipTests \
                         -Djkube.skip=true \
-                        -Dsonar.projectKey=users-service \
+                        -Dsonar.projectKey=oscarfndez_users-service \
                         -Dsonar.organization=oscarfndez
                     '''
                 }
