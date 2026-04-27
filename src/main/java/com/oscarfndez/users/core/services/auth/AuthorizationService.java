@@ -3,6 +3,7 @@ package com.oscarfndez.users.core.services.auth;
 
 import com.oscarfndez.users.ports.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,10 @@ public class AuthorizationService {
     private final UserRepository userRepository;
 
     public boolean hasRole(String role) {
-        UserDetails loggedInUser = (UserDetails) SecurityContextHolder. getContext(). getAuthentication(). getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails loggedInUser)) {
+            return false;
+        }
 
         return hasRole(loggedInUser.getAuthorities(), role)
                 && userRepository.findByEmail(loggedInUser.getUsername()).isPresent();
