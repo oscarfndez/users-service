@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'oscarfndez/users-service'
         IMAGE_TAG = "build-${env.BUILD_NUMBER}"
+        SONAR_PROJECT_KEY = 'users-service'
     }
 
     stages {
@@ -16,6 +17,20 @@ pipeline {
         stage('Build and Test') {
             steps {
                 sh 'mvn -B clean verify -Djkube.skip=true'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                      mvn -B sonar:sonar \
+                        -DskipTests \
+                        -Djkube.skip=true \
+                        -Dsonar.projectKey=users-service \
+                        -Dsonar.organization=oscarfndez
+                    '''
+                }
             }
         }
 
