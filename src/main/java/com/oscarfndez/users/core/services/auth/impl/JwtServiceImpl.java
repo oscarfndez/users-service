@@ -1,5 +1,6 @@
 package com.oscarfndez.users.core.services.auth.impl;
 
+import com.oscarfndez.framework.core.model.auth.User;
 import com.oscarfndez.users.core.services.auth.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -35,6 +36,9 @@ public class JwtServiceImpl implements JwtService {
                         .map(Object::toString)
                         .orElse(null)
         );
+        if (userDetails instanceof User user && user.getId() != null) {
+            extraClaims.put("user_id", user.getId().toString());
+        }
         return generateToken(extraClaims, userDetails);
     }
 
