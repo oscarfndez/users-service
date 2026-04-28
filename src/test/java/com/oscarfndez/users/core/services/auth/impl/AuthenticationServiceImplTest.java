@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,6 +53,11 @@ class AuthenticationServiceImplTest {
                 .password("raw-password")
                 .build();
         when(passwordEncoder.encode("raw-password")).thenReturn("encoded-password");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(UUID.randomUUID());
+            return user;
+        });
         when(jwtService.generateToken(any(UserDetails.class))).thenReturn("jwt-token");
 
         var response = authenticationService.signup(request);
