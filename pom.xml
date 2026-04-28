@@ -33,7 +33,7 @@
         <sonar.junit.reportPaths>${project.build.directory}/surefire-reports</sonar.junit.reportPaths>
         <sonar.coverage.exclusions>**/config/**</sonar.coverage.exclusions>
         <skipITs>true</skipITs>
-        <springdoc.version>2.8.17</springdoc.version>
+        <springdoc.version>2.7.0</springdoc.version>
     </properties>
     <dependencies>
 
