@@ -90,6 +90,15 @@ class UserServiceImplTest {
         verify(userRepository).save(user);
     }
 
+    @Test
+    void deleteOneDelegatesToRepository() {
+        UUID userId = UUID.randomUUID();
+
+        userService.deleteOne(userId);
+
+        verify(userRepository).deleteById(userId);
+    }
+
     private static User user(UUID userId) {
         return User.builder()
                 .id(userId)

@@ -14,4 +14,6 @@ public interface UserService {
     User retrieveOne(UUID id);
 
     User update(UUID id, String firstName, String lastName, String email, String role);
+
+    void deleteOne(UUID id);
 }

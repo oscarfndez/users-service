@@ -54,6 +54,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    @Override
+    public void deleteOne(UUID id) {
+        userRepository.deleteById(id);
+    }
+
     private String normalizeSearch(String search) {
         if (search == null || search.isBlank()) {
             return null;
