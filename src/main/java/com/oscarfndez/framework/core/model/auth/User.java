@@ -27,7 +27,6 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    @Lob
     @Column(columnDefinition = "bytea")
     private byte[] photo;
     private String photoContentType;
