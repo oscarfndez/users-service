@@ -27,6 +27,9 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
+    @Lob
+    private byte[] photo;
+    private String photoContentType;
 
     @Enumerated(EnumType.STRING)
     private Role role;

@@ -12,14 +12,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
@@ -45,13 +49,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User create(String firstName, String lastName, String email, String password, String role, MultipartFile photo)
+            throws IOException {
+        User user = User.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .role(Role.valueOf(role))
+                .build();
+
+        if (photo != null && !photo.isEmpty()) {
+            user.setPhoto(photo.getBytes());
+            user.setPhotoContentType(photo.getContentType());
+        }
+
+        return userRepository.save(user);
+    }
+
+    @Override
     public User update(UUID id, String firstName, String lastName, String email, String role) {
+        return userRepository.save(updateExistingUser(id, firstName, lastName, email, role));
+    }
+
+    @Override
+    public User update(UUID id, String firstName, String lastName, String email, String role, MultipartFile photo)
+            throws IOException {
+        User user = updateExistingUser(id, firstName, lastName, email, role);
+        if (photo != null && !photo.isEmpty()) {
+            user.setPhoto(photo.getBytes());
+            user.setPhotoContentType(photo.getContentType());
+        }
+
+        return userRepository.save(user);
+    }
+
+    private User updateExistingUser(UUID id, String firstName, String lastName, String email, String role) {
         User user = retrieveOne(id);
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
         user.setRole(Role.valueOf(role));
-        return userRepository.save(user);
+        return user;
     }
 
     @Override

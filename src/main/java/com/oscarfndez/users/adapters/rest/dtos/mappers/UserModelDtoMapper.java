@@ -14,6 +14,7 @@ public class UserModelDtoMapper {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .role(user.getRole().name())
+                .hasPhoto(user.getPhoto() != null && user.getPhoto().length > 0)
                 .build();
     }
 }

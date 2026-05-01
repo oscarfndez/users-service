@@ -1,6 +1,7 @@
 package com.oscarfndez.users.adapters.rest.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +29,10 @@ public class UserDto {
 
     @JsonProperty("role")
     private String role;
+
+    @JsonProperty(value = "password", access = Access.WRITE_ONLY)
+    private String password;
+
+    @JsonProperty("has_photo")
+    private boolean hasPhoto;
 }

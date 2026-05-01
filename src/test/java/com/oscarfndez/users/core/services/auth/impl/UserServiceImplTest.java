@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -88,6 +93,48 @@ class UserServiceImplTest {
         assertThat(updated.getEmail()).isEqualTo("ana@example.com");
         assertThat(updated.getRole()).isEqualTo(Role.ADMIN);
         verify(userRepository).save(user);
+    }
+
+    @Test
+    void updateStoresPhotoWhenMultipartFileIsProvided() throws Exception {
+        UUID userId = UUID.randomUUID();
+        User user = user(userId);
+        MockMultipartFile photo = new MockMultipartFile(
+                "photo",
+                "avatar.png",
+                "image/png",
+                new byte[] {1, 2, 3}
+        );
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+
+        User updated = userService.update(userId, "Ana", "Garcia", "ana@example.com", "ADMIN", photo);
+
+        assertThat(updated.getPhoto()).containsExactly(1, 2, 3);
+        assertThat(updated.getPhotoContentType()).isEqualTo("image/png");
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void createStoresEncodedPasswordAndPhotoWhenMultipartFileIsProvided() throws Exception {
+        MockMultipartFile photo = new MockMultipartFile(
+                "photo",
+                "avatar.png",
+                "image/png",
+                new byte[] {1, 2, 3}
+        );
+        when(passwordEncoder.encode("raw-password")).thenReturn("encoded-password");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User created = userService.create("Ana", "Garcia", "ana@example.com", "raw-password", "ADMIN", photo);
+
+        assertThat(created.getFirstName()).isEqualTo("Ana");
+        assertThat(created.getLastName()).isEqualTo("Garcia");
+        assertThat(created.getEmail()).isEqualTo("ana@example.com");
+        assertThat(created.getPassword()).isEqualTo("encoded-password");
+        assertThat(created.getRole()).isEqualTo(Role.ADMIN);
+        assertThat(created.getPhoto()).containsExactly(1, 2, 3);
+        assertThat(created.getPhotoContentType()).isEqualTo("image/png");
     }
 
     @Test

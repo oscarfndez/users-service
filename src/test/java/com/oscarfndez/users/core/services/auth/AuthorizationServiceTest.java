@@ -46,7 +46,7 @@ class AuthorizationServiceTest {
     }
 
     @Test
-    void hasRoleReturnsFalseWhenAuthenticatedUserDoesNotHaveRole() {
+    void hasRoleReturnsTrueWhenAuthenticatedAdminRequiresUserRoleAndExists() {
         User user = User.builder()
                 .email("admin@example.com")
                 .password("encoded-password")
@@ -54,8 +54,22 @@ class AuthorizationServiceTest {
                 .build();
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()));
+        when(userRepository.findByEmail("admin@example.com")).thenReturn(Optional.of(user));
 
-        assertThat(authorizationService.hasRole("USER")).isFalse();
+        assertThat(authorizationService.hasRole("USER")).isTrue();
+    }
+
+    @Test
+    void hasRoleReturnsFalseWhenNonAdminRoleDoesNotMatch() {
+        User user = User.builder()
+                .email("oscar@example.com")
+                .password("encoded-password")
+                .role(Role.USER)
+                .build();
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()));
+
+        assertThat(authorizationService.hasRole("ADMIN")).isFalse();
     }
 
     @Test
