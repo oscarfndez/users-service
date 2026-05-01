@@ -23,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping({"/api/users", "/gamesCollection/api/users"})
 @AllArgsConstructor
-@PreAuthorize("@authorizationService.hasRole('USER')")
+@PreAuthorize("@authorizationService.hasRole('ADMIN')")
 public class UsersController {
 
     private final UserService userService;

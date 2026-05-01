@@ -28,6 +28,11 @@ public class AuthorizationService {
     }
 
     private boolean hasRole(Collection<? extends GrantedAuthority> authorities, String role) {
-        return (!authorities.isEmpty() && authorities.stream().map(GrantedAuthority::getAuthority).anyMatch(auth -> auth.equals(role)));
+        return (!authorities.isEmpty() && authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(auth -> auth.equals(role)
+                        || auth.equals("ROLE_" + role)
+                        || auth.equals("ADMIN")
+                        || auth.equals("ROLE_ADMIN")));
     }
 }
