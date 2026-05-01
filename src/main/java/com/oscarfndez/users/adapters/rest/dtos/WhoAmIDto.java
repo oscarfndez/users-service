@@ -20,4 +20,13 @@ public class WhoAmIDto {
 
     @JsonProperty("role")
     private String role;
+
+    @JsonProperty("first_name")
+    private String firstName;
+
+    @JsonProperty("last_name")
+    private String lastName;
+
+    @JsonProperty("has_photo")
+    private boolean hasPhoto;
 }
