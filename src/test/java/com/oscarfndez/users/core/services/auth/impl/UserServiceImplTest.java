@@ -140,10 +140,12 @@ class UserServiceImplTest {
     @Test
     void deleteOneDelegatesToRepository() {
         UUID userId = UUID.randomUUID();
+        User user = user(userId);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         userService.deleteOne(userId);
 
-        verify(userRepository).deleteById(userId);
+        verify(userRepository).delete(user);
     }
 
     private static User user(UUID userId) {

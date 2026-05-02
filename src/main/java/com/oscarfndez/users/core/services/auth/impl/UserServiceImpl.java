@@ -24,6 +24,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
     @Override
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
@@ -95,7 +96,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteOne(UUID id) {
-        userRepository.deleteById(id);
+        User user = retrieveOne(id);
+        userRepository.delete(user);
     }
 
     private String normalizeSearch(String search) {
