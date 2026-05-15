@@ -5,6 +5,9 @@ import com.oscarfndez.framework.core.model.auth.User;
 import com.oscarfndez.users.ports.repositories.UserRepository;
 import com.oscarfndez.users.core.services.auth.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(cacheNames = "userPages", key = "{#p0 == null ? '' : #p0.trim(), #p1, #p2, #p3, #p4}")
     public Page<User> retrievePage(String search, String sortField, String sortDir, int page, int size) {
         Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, mapSortField(sortField)));
@@ -44,12 +48,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(cacheNames = "users", key = "#p0")
     public User retrieveOne(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
     }
 
     @Override
+    @CacheEvict(cacheNames = "userPages", allEntries = true)
     public User create(String firstName, String lastName, String email, String password, String role, MultipartFile photo)
             throws IOException {
         User user = User.builder()
@@ -69,11 +75,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "users", key = "#p0"),
+            @CacheEvict(cacheNames = "userPages", allEntries = true)
+    })
     public User update(UUID id, String firstName, String lastName, String email, String role) {
         return userRepository.save(updateExistingUser(id, firstName, lastName, email, role));
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "users", key = "#p0"),
+            @CacheEvict(cacheNames = "userPages", allEntries = true)
+    })
     public User update(UUID id, String firstName, String lastName, String email, String role, MultipartFile photo)
             throws IOException {
         User user = updateExistingUser(id, firstName, lastName, email, role);
@@ -95,6 +109,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "users", key = "#p0"),
+            @CacheEvict(cacheNames = "userPages", allEntries = true)
+    })
     public void deleteOne(UUID id) {
         User user = retrieveOne(id);
         userRepository.delete(user);
