@@ -11,6 +11,7 @@ Spring Boot microservice responsible for authentication, user management, privat
 - Stores private user photos in PostgreSQL.
 - Exposes `whoami` endpoints for the authenticated user.
 - Publishes user lifecycle events to ActiveMQ when users are created, updated, or deleted.
+- Can replay existing users as lifecycle events to rebuild downstream projections.
 - Provides OpenAPI/Swagger documentation.
 - Exposes Prometheus metrics through Spring Boot Actuator.
 
@@ -143,6 +144,7 @@ Users:
 GET    /api/users
 GET    /api/users/all?page=0&size=10&sortField=email&sortDir=asc
 POST   /api/users
+POST   /api/users/events/replay
 PUT    /api/users?id={uuid}
 DELETE /api/users?id={uuid}
 GET    /api/users/photo?id={uuid}
@@ -189,6 +191,13 @@ afterDeleting
 ```
 
 Inventory Service consumes these events to react to user changes.
+Notifications Service also consumes these events to maintain its local `known_user` projection. If notifications are deployed after users already exist, run:
+
+```http
+POST /api/users/events/replay
+```
+
+This endpoint requires the `ADMIN` role and publishes one `afterUpdating` event per existing user.
 
 ## CI/CD
 

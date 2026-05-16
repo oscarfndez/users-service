@@ -3,7 +3,9 @@ package com.oscarfndez.users.adapters.rest.controllers.auth;
 import com.oscarfndez.framework.core.model.auth.User;
 import com.oscarfndez.framework.core.model.dto.PageResponseDto;
 import com.oscarfndez.users.adapters.rest.dtos.UserDto;
+import com.oscarfndez.users.adapters.rest.dtos.UserEventsReplayResponseDto;
 import com.oscarfndez.users.adapters.rest.dtos.mappers.UserModelDtoMapper;
+import com.oscarfndez.users.core.events.UserLifecycleReplayService;
 import com.oscarfndez.users.core.services.auth.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,7 @@ public class UsersController {
 
     private final UserService userService;
     private final UserModelDtoMapper userModelDtoMapper;
+    private final UserLifecycleReplayService userLifecycleReplayService;
 
     @GetMapping
     public ResponseEntity<UserDto> loadUser(@RequestParam UUID id) {
@@ -119,5 +122,10 @@ public class UsersController {
     public ResponseEntity<Void> deleteUser(@RequestParam UUID id) {
         userService.deleteOne(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/events/replay")
+    public ResponseEntity<UserEventsReplayResponseDto> replayUserEvents() {
+        return ResponseEntity.ok(new UserEventsReplayResponseDto(userLifecycleReplayService.replayExistingUsers()));
     }
 }
